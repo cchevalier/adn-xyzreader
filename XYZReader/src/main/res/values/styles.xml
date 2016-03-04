@@ -19,6 +19,11 @@
 
     <style name="Theme.Bacon" parent="@style/Theme.AppCompat.Light.NoActionBar">
 
+        <!-- customize the color palette -->
+        <item name="colorPrimary">@color/material_deep_orange_500</item>
+        <item name="colorPrimaryDark">@color/material_deep_orange_700</item>
+        <item name="colorAccent">@color/material_orange_200</item>
+
     </style>
 
     <style name="Theme.Bacon.Detail">
