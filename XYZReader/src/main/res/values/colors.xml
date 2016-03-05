@@ -25,7 +25,14 @@
     <color name="ltgray">#ffe0e0e0</color>
 
     <!-- Orange color theme (based on provided original icon) -->
+    <color name="colorPrimary">#ff5722</color>
+    <color name="colorPrimaryDark">#e64a19</color>
+    <color name="colorAccent">#ff8a65</color>
+
+    <!-- Orange color theme (based on provided original icon) -->
+<!--
     <color name="material_deep_orange_500">#FF5722</color>
     <color name="material_deep_orange_700">#E64A19</color>
     <color name="material_orange_200">#FF6E40</color>
+-->
 </resources>
