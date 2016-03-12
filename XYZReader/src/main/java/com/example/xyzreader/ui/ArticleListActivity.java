@@ -146,14 +146,22 @@ public class ArticleListActivity extends AppCompatActivity implements
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             mCursor.moveToPosition(position);
+
+            // Main title
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+
+            // Subtitle
             holder.subtitleView.setText(
-                    DateUtils.getRelativeTimeSpanString(
+                            "by "
+                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                            + ", "
+                            + DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
                             System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_ALL).toString()
-                            + " by "
-                            + mCursor.getString(ArticleLoader.Query.AUTHOR));
+                            );
+
+            // Thumbnail
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
