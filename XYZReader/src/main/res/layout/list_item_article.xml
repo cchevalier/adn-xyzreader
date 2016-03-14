@@ -19,7 +19,7 @@
         android:orientation="vertical">
 
         <!--suppress AndroidLintContentDescription -->
-        <com.example.xyzreader.ui.DynamicHeightNetworkImageView
+        <com.example.xyzreader.ui.custom.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             tools:src="@drawable/sample_p004_thumb"
             android:layout_width="match_parent"
