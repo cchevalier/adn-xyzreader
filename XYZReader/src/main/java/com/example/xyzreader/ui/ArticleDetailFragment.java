@@ -37,7 +37,7 @@ import com.example.xyzreader.ui.util.ImageLoaderHelper;
  */
 public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "ArticleDetailFragment";
+    private static final String TAG = "XYZ-ArticleDetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
     private static final float PARALLAX_FACTOR = 1.25f;
@@ -193,13 +193,16 @@ public class ArticleDetailFragment extends Fragment implements
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
 
             bylineView.setText(
-                    Html.fromHtml("by <font color='#ffffff'>"
-                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
-                            + "</font>" + ", ")
-                            + DateUtils.getRelativeTimeSpanString(
-                            mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
-                            System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
-                            DateUtils.FORMAT_ABBREV_ALL).toString()
+                    Html.fromHtml(
+                            "by <font color='#ffffff'>"
+                                    + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                                    + "</font>"
+                                    + ", "
+                                    + DateUtils.getRelativeTimeSpanString(
+                                    mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
+                                    System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
+                                    DateUtils.FORMAT_ABBREV_ALL).toString()
+                    )
             );
 
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
