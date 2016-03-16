@@ -37,7 +37,8 @@ import com.example.xyzreader.ui.util.ImageLoaderHelper;
  */
 public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
-    private static final String TAG = "XYZ-ArticleDetailFragment";
+
+    private static final String TAG = "XYZ-DetailFragment";
 
     public static final String ARG_ITEM_ID = "item_id";
     private static final float PARALLAX_FACTOR = 1.25f;
