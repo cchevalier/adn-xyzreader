@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
+
         super.onCreate(savedInstanceState);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -114,11 +117,14 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader: ");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished: ");
+
         mCursor = cursor;
         mPagerAdapter.notifyDataSetChanged();
 
@@ -140,6 +146,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        Log.d(TAG, "onLoaderReset: ");
+
         mCursor = null;
         mPagerAdapter.notifyDataSetChanged();
     }
@@ -167,6 +175,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            Log.d(TAG, "PagerAdapter.setPrimaryItem: " + position);
+
             super.setPrimaryItem(container, position, object);
 /*
             ArticleDetailFragment fragment = (ArticleDetailFragment) object;
@@ -179,6 +189,8 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         @Override
         public Fragment getItem(int position) {
+            Log.d(TAG, "getItem: " + position);
+
             mCursor.moveToPosition(position);
             return ArticleDetailFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID));
         }

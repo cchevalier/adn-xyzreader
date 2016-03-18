@@ -39,7 +39,7 @@ import com.example.xyzreader.ui.util.ImageLoaderHelper;
 public class ArticleDetailFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "XYZ-DetailFragment";
+    private static final String TAG = "XYZ-DetailFrag";
 
     public static final String ARG_ITEM_ID = "item_id";
 //    private static final float PARALLAX_FACTOR = 1.25f;
@@ -67,6 +67,8 @@ public class ArticleDetailFragment extends Fragment implements
     }
 
     public static ArticleDetailFragment newInstance(long itemId) {
+        Log.d(TAG, "newInstance: " + itemId);
+
         Bundle arguments = new Bundle();
         arguments.putLong(ARG_ITEM_ID, itemId);
         ArticleDetailFragment fragment = new ArticleDetailFragment();
@@ -96,6 +98,8 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        Log.d(TAG, "onActivityCreated: ");
+
         super.onActivityCreated(savedInstanceState);
 
         // In support library r8, calling initLoader for a fragment in a FragmentPagerAdapter in
@@ -151,9 +155,9 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar_detail);
-        getActivityCast().setSupportActionBar(toolbar);
-        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar_detail);
+//        getActivityCast().setSupportActionBar(toolbar);
+//        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getActivityCast().getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
 
         Log.d(TAG, "onCreateView: calling bindViews");
@@ -206,6 +210,13 @@ public class ArticleDetailFragment extends Fragment implements
             Log.d(TAG, "bindViews: mRootView is null");
             return;
         }
+
+
+        Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar_detail);
+        getActivityCast().setSupportActionBar(toolbar);
+        getActivityCast().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActivityCast().getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
+
 
         TextView titleView = (TextView) mRootView.findViewById(R.id.article_title);
         
@@ -261,6 +272,7 @@ public class ArticleDetailFragment extends Fragment implements
                     });
             
         } else {
+            Log.d(TAG, "bindViews: mCursor is null");
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A");
@@ -271,11 +283,15 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader: ");
+
         return ArticleLoader.newInstanceForItemId(getActivity(), mItemId);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished: ");
+
         if (!isAdded()) {
             if (cursor != null) {
                 cursor.close();
@@ -296,6 +312,8 @@ public class ArticleDetailFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        Log.d(TAG, "onLoaderReset: ");
+
         mCursor = null;
         Log.d(TAG, "onLoaderReset: calling bindViews");
         bindViews();
