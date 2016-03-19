@@ -45,6 +45,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
@@ -72,6 +73,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart: ");
         super.onStart();
         registerReceiver(mRefreshingReceiver,
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
@@ -79,6 +81,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop: ");
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
@@ -97,10 +100,12 @@ public class ArticleListActivity extends AppCompatActivity implements
     };
 
     private void refresh() {
+        Log.d(TAG, "refresh: ");
         startService(new Intent(this, UpdaterService.class));
     }
 
     private void updateRefreshingUI() {
+        Log.d(TAG, "updateRefreshingUI: ");
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
@@ -110,11 +115,13 @@ public class ArticleListActivity extends AppCompatActivity implements
     //
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader: ");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished: ");
         Adapter adapter = new Adapter(cursor);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
@@ -126,6 +133,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset: ");
         mRecyclerView.setAdapter(null);
     }
 
@@ -135,17 +143,20 @@ public class ArticleListActivity extends AppCompatActivity implements
         private Cursor mCursor;
 
         public Adapter(Cursor cursor) {
+            Log.d(TAG, "Adapter: ");
             mCursor = cursor;
         }
 
         @Override
         public long getItemId(int position) {
+            Log.d(TAG, "getItemId: ");
             mCursor.moveToPosition(position);
             return mCursor.getLong(ArticleLoader.Query._ID);
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Log.d(TAG, "onCreateViewHolder: ");
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
@@ -160,6 +171,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            Log.d(TAG, "onBindViewHolder: " + position);
             mCursor.moveToPosition(position);
 
             // Main title
@@ -185,6 +197,7 @@ public class ArticleListActivity extends AppCompatActivity implements
 
         @Override
         public int getItemCount() {
+            Log.d(TAG, "getItemCount: ");
             return mCursor.getCount();
         }
     }
