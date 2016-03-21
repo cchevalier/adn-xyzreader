@@ -9,13 +9,12 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
-import android.util.TypedValue;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -24,6 +23,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.data.UpdaterService;
+import com.example.xyzreader.ui.custom.DynamicHeightNetworkImageView;
+import com.example.xyzreader.ui.util.ImageLoaderHelper;
 
 /**
  * An activity representing a list of Articles. This activity has different presentations for
@@ -31,26 +32,38 @@ import com.example.xyzreader.data.UpdaterService;
  * touched, lead to a {@link ArticleDetailActivity} representing item details. On tablets, the
  * activity presents a grid of items as cards.
  */
-public class ArticleListActivity extends ActionBarActivity implements
+public class ArticleListActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
-    private Toolbar mToolbar;
+    private static final String TAG = "XYZ-Main";
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
+    private boolean mIsRefreshing = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
 
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.primary));
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG, "onRefresh: forced by swiping");
+                refresh();
+            }
+        });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
@@ -58,12 +71,9 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
     }
 
-    private void refresh() {
-        startService(new Intent(this, UpdaterService.class));
-    }
-
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart: ");
         super.onStart();
         registerReceiver(mRefreshingReceiver,
                 new IntentFilter(UpdaterService.BROADCAST_ACTION_STATE_CHANGE));
@@ -71,12 +81,14 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop: ");
         super.onStop();
         unregisterReceiver(mRefreshingReceiver);
     }
 
-    private boolean mIsRefreshing = false;
-
+    //
+    // Refresh handling
+    //
     private BroadcastReceiver mRefreshingReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -87,17 +99,29 @@ public class ArticleListActivity extends ActionBarActivity implements
         }
     };
 
+    private void refresh() {
+        Log.d(TAG, "refresh: ");
+        startService(new Intent(this, UpdaterService.class));
+    }
+
     private void updateRefreshingUI() {
+        Log.d(TAG, "updateRefreshingUI: ");
         mSwipeRefreshLayout.setRefreshing(mIsRefreshing);
     }
 
+
+    //
+    // Loader stuff
+    //
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.d(TAG, "onCreateLoader: ");
         return ArticleLoader.newAllArticlesInstance(this);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        Log.d(TAG, "onLoadFinished: ");
         Adapter adapter = new Adapter(cursor);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
@@ -109,24 +133,30 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        Log.d(TAG, "onLoaderReset: ");
         mRecyclerView.setAdapter(null);
     }
 
+
+    // Adapter stuff
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {
         private Cursor mCursor;
 
         public Adapter(Cursor cursor) {
+            Log.d(TAG, "Adapter: ");
             mCursor = cursor;
         }
 
         @Override
         public long getItemId(int position) {
+            Log.d(TAG, "getItemId: ");
             mCursor.moveToPosition(position);
             return mCursor.getLong(ArticleLoader.Query._ID);
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            Log.d(TAG, "onCreateViewHolder: ");
             View view = getLayoutInflater().inflate(R.layout.list_item_article, parent, false);
             final ViewHolder vh = new ViewHolder(view);
             view.setOnClickListener(new View.OnClickListener() {
@@ -141,15 +171,24 @@ public class ArticleListActivity extends ActionBarActivity implements
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
+            Log.d(TAG, "onBindViewHolder: " + position);
             mCursor.moveToPosition(position);
+
+            // Main title
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+
+            // Subtitle
             holder.subtitleView.setText(
-                    DateUtils.getRelativeTimeSpanString(
+                            "by "
+                            + mCursor.getString(ArticleLoader.Query.AUTHOR)
+                            + ", "
+                            + DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
                             System.currentTimeMillis(), DateUtils.HOUR_IN_MILLIS,
                             DateUtils.FORMAT_ABBREV_ALL).toString()
-                            + " by "
-                            + mCursor.getString(ArticleLoader.Query.AUTHOR));
+                            );
+
+            // Thumbnail
             holder.thumbnailView.setImageUrl(
                     mCursor.getString(ArticleLoader.Query.THUMB_URL),
                     ImageLoaderHelper.getInstance(ArticleListActivity.this).getImageLoader());
@@ -158,10 +197,13 @@ public class ArticleListActivity extends ActionBarActivity implements
 
         @Override
         public int getItemCount() {
+            Log.d(TAG, "getItemCount: ");
             return mCursor.getCount();
         }
     }
 
+
+    // ViewHolder stuff
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public DynamicHeightNetworkImageView thumbnailView;
         public TextView titleView;
@@ -174,4 +216,5 @@ public class ArticleListActivity extends ActionBarActivity implements
             subtitleView = (TextView) view.findViewById(R.id.article_subtitle);
         }
     }
+
 }

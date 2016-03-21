@@ -87,3 +87,5 @@ gradle-app.setting
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
+snapshots/100p/
+snapshots/50p/
