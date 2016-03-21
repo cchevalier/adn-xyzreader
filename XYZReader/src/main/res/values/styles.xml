@@ -13,7 +13,7 @@
         <!-- customized color palette -->
         <item name="colorPrimary">@color/deep_orange_500</item>
         <item name="colorPrimaryDark">@color/deep_orange_700</item>
-        <item name="colorAccent">@color/lime_A400</item>
+        <item name="colorAccent">@color/indigo_A200</item>
 
         <item name="android:textColorPrimary">@color/grey_900</item>
         <item name="android:textColorSecondary">@color/grey_600</item>
